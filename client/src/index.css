@@ -1,0 +1,273 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Miranda+Sans:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import "tailwindcss";
+
+
+@theme {
+  --font-inter: 'Inter', sans-serif;
+  --font-cinzel: 'Cinzel', serif;
+  --font-miranda: 'Miranda Sans', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
+  
+  /* Custom Colors - Dark Mode (Default) */
+  --color-gold: #D4AF37;
+  --color-gold-light: #F4E29B;
+  --color-gold-dark: #B8960C;
+  --color-black-rich: #0A0A0A;
+  --color-black-soft: #1A1A1A;
+  --color-gray-dark: #2A2A2A;
+  
+  /* Light Mode Colors */
+  --color-white-pure: #FFFFFF;
+  --color-white-soft: #F5F5F5;
+  --color-gray-light: #E5E5E5;
+  --color-gray-medium: #9CA3AF;
+}
+
+/* Dark Mode Variables */
+:root {
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #1A1A1A;
+  --bg-tertiary: #2A2A2A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  --border-color: rgba(212, 175, 55, 0.2);
+}
+
+/* Light Mode Variables */
+.light-mode {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --bg-tertiary: #E5E5E5;
+  --text-primary: #0A0A0A;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+  --border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Smooth Scroll Behavior */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* Global Styles */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8960C;
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-10px);
+  }
+  75% {
+    transform: translateY(-30px) translateX(5px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation Utility Classes */
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.fade-in-left {
+  animation: fadeInLeft 0.8s ease-out forwards;
+}
+
+.fade-in-right {
+  animation: fadeInRight 0.8s ease-out forwards;
+}
+
+.scale-in {
+  animation: scaleIn 0.8s ease-out forwards;
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float ease-in-out infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Stagger Delays */
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+
+.stagger-5 {
+  animation-delay: 0.5s;
+}
+
+.stagger-6 {
+  animation-delay: 0.6s;
+}
+
+/* Initial State for Scroll Animations */
+.animate-on-scroll {
+  opacity: 0;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-gold hover:bg-gold-dark text-black-rich font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+}
+
+.btn-secondary {
+  @apply border-2 border-gold text-gold hover:bg-gold hover:text-black-rich font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105;
+}
+
+/* Input Styles */
+.input-field {
+  @apply w-full px-4 py-3 bg-gray-dark border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all duration-300;
+}
+
+.light-mode .input-field {
+  @apply bg-white-soft text-black-rich border-gray-light;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-gray-dark p-6 rounded-lg border border-gold/10 hover:border-gold/30 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg hover:shadow-gold/10;
+}
+
+.light-mode .card {
+  @apply bg-white-pure border-gray-light hover:shadow-gray-light/50;
+}
+
+/* Focus States */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* Smooth Transitions */
+a,
+button,
+input,
+select,
+textarea {
+  transition: all 0.3s ease;
+}
+
+/* Hide Scrollbar Utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
