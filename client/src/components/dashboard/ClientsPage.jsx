@@ -14,6 +14,7 @@ const ClientsPage = () => {
 
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -91,6 +92,7 @@ const ClientsPage = () => {
     }
 
     try {
+      setIsSubmitting(true);
       await createClient(formData);
       toast.success('Client created successfully');
       setFormData({ name: '', email: '', phone: '', address: '', status: 'active' });
@@ -98,6 +100,8 @@ const ClientsPage = () => {
       fetchClients();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to create client');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -109,12 +113,15 @@ const ClientsPage = () => {
     }
 
     try {
+      setIsSubmitting(true);
       await updateClient(selectedClient._id, editFormData);
       toast.success('Client updated successfully');
       setShowEditModal(false);
       fetchClients();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update client');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -345,7 +352,8 @@ const ClientsPage = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     maxLength={10}
-                    className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }} placeholder="+91 8933745375" />
+                    className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }} 
+                    placeholder="Enter phone number" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Address</label>
@@ -358,8 +366,17 @@ const ClientsPage = () => {
               </form>
             </div>
             <div className="shrink-0 flex items-center justify-end space-x-3 p-5 border-t" style={{ borderColor: 'var(--border-color)' }}>
-              <button type="button" onClick={resetForm} className="px-6 py-2.5 border rounded-lg hover:bg-gray-500/10 transition-colors cursor-pointer" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>Cancel</button>
-              <button type="submit" form="create-client-form" className="px-6 py-2.5 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer">Add Client</button>
+              <button type="button" disabled={isSubmitting} onClick={resetForm} className="px-6 py-2.5 border rounded-lg hover:bg-gray-500/10 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>Cancel</button>
+              <button type="submit" form="create-client-form" disabled={isSubmitting} className="px-6 py-2.5 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer flex items-center justify-center min-w-[120px] disabled:opacity-70 disabled:cursor-not-allowed">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  'Add Client'
+                )}
+              </button>
             </div>
           </div>
         </div>, document.body
@@ -462,8 +479,17 @@ const ClientsPage = () => {
               </form>
             </div>
             <div className="shrink-0 flex items-center justify-end space-x-3 p-5 border-t" style={{ borderColor: 'var(--border-color)' }}>
-              <button type="button" onClick={() => setShowEditModal(false)} className="px-6 py-2.5 border rounded-lg hover:bg-gray-500/10 transition-colors cursor-pointer" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>Cancel</button>
-              <button type="submit" form="edit-client-form" className="px-6 py-2.5 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer">Update Client</button>
+              <button type="button" disabled={isSubmitting} onClick={() => setShowEditModal(false)} className="px-6 py-2.5 border rounded-lg hover:bg-gray-500/10 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>Cancel</button>
+              <button type="submit" form="edit-client-form" disabled={isSubmitting} className="px-6 py-2.5 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update Client'
+                )}
+              </button>
             </div>
           </div>
         </div>, document.body

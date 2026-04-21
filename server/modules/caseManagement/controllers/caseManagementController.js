@@ -1,6 +1,8 @@
 const Client = require('../models/Client');
 const Case = require('../models/Case');
+const User = require('../../auth/models/User');
 const { sendCaseCreationEmail } = require('../services/emailService');
+const { createAndSendNotification } = require('../../notificationManagement/services/notificationService');
 
 // ==================== CLIENTS ====================
 
@@ -253,6 +255,33 @@ const createCase = async (req, res) => {
       .populate('client', 'name email')
       .populate('assignedTo', 'name email');
 
+    // Send internal notifications to admins and assigned user
+    try {
+      const admins = await User.find({ role: 'admin', isActive: true });
+      const userIdsToNotify = new Set();
+      
+      // Notify admins
+      admins.forEach(admin => userIdsToNotify.add(admin._id.toString()));
+      
+      // Notify assigned user
+      if (assignedTo) {
+        userIdsToNotify.add(assignedTo.toString());
+      }
+      
+      const title = 'New Case Created';
+      const message = `Case "${populatedCase.title}" has been created and assigned. Case number: ${populatedCase.caseNumber}.`;
+
+      for (const userId of userIdsToNotify) {
+        await createAndSendNotification(userId, { 
+          title, 
+          message, 
+          type: 'case' 
+        });
+      }
+    } catch (notifErr) {
+      console.error('Failed to send internal notifications:', notifErr);
+    }
+
     // Send email to client
     try {
       await sendCaseCreationEmail(client.email, client.name, {
@@ -299,6 +328,9 @@ const updateCase = async (req, res) => {
       });
     }
 
+    const oldHearingDate = caseItem.hearingDate ? caseItem.hearingDate.getTime() : null;
+    const oldAssignedTo = caseItem.assignedTo ? caseItem.assignedTo.toString() : null;
+
     if (title) caseItem.title = title;
     if (description) caseItem.description = description;
     if (caseType) caseItem.caseType = caseType;
@@ -312,6 +344,46 @@ const updateCase = async (req, res) => {
     const updatedCase = await Case.findById(id)
       .populate('client', 'name email')
       .populate('assignedTo', 'name email');
+
+    // Send notifications if hearing date or assignment changed
+    try {
+      const newHearingDate = caseItem.hearingDate ? caseItem.hearingDate.getTime() : null;
+      const newAssignedTo = caseItem.assignedTo ? caseItem.assignedTo.toString() : null;
+
+      if (newHearingDate !== oldHearingDate || newAssignedTo !== oldAssignedTo) {
+        const userIdsToNotify = new Set();
+        const admins = await User.find({ role: 'admin', isActive: true });
+        admins.forEach(admin => userIdsToNotify.add(admin._id.toString()));
+        
+        if (newAssignedTo) userIdsToNotify.add(newAssignedTo);
+        if (oldAssignedTo) userIdsToNotify.add(oldAssignedTo);
+
+        let titleNotif = 'Case Updated';
+        let messageNotif = `Case "${updatedCase.title}" has been updated.`;
+
+        if (newHearingDate !== oldHearingDate) {
+          titleNotif = 'Hearing Date Changed';
+          const timeStr = updatedCase.hearingDate.toLocaleDateString('en-IN', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true 
+          });
+          messageNotif = `The hearing for case "${updatedCase.title}" has been rescheduled to ${timeStr}.`;
+        } else if (newAssignedTo !== oldAssignedTo) {
+          titleNotif = 'Case Reassigned';
+          messageNotif = `Case "${updatedCase.title}" has been reassigned to ${updatedCase.assignedTo ? updatedCase.assignedTo.name : 'someone else'}.`;
+        }
+
+        for (const userId of userIdsToNotify) {
+          await createAndSendNotification(userId, { 
+            title: titleNotif, 
+            message: messageNotif, 
+            type: 'case' 
+          });
+        }
+      }
+    } catch (notifErr) {
+      console.error('Failed to send update notifications:', notifErr);
+    }
 
     res.status(200).json({
       success: true,
