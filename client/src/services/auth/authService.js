@@ -7,7 +7,11 @@ const AUTH_ENDPOINTS = {
   GET_USERS: '/auth/users',
   UPDATE_USER: '/auth/users',
   TOGGLE_BLOCK: '/auth/users',
-  DELETE_USER: '/auth/users'
+  DELETE_USER: '/auth/users',
+  FORGOT_PASSWORD: '/auth/forgot-password',
+  VERIFY_OTP: '/auth/verify-otp',
+  RESET_PASSWORD: '/auth/reset-password',
+  UPDATE_PASSWORD: '/auth/update-password'
 };
 
 export const login = async (identifier, password) => {
@@ -77,6 +81,26 @@ export const getToken = () => {
   return localStorage.getItem('token');
 };
 
+export const forgotPassword = async (email) => {
+  const response = await api.post(AUTH_ENDPOINTS.FORGOT_PASSWORD, { email });
+  return response.data;
+};
+
+export const verifyOTP = async (email, otp) => {
+  const response = await api.post(AUTH_ENDPOINTS.VERIFY_OTP, { email, otp });
+  return response.data;
+};
+
+export const resetPassword = async (email, password) => {
+  const response = await api.post(AUTH_ENDPOINTS.RESET_PASSWORD, { email, password });
+  return response.data;
+};
+
+export const updateMyPassword = async (passwordData) => {
+  const response = await api.put(AUTH_ENDPOINTS.UPDATE_PASSWORD, passwordData);
+  return response.data;
+};
+
 export default {
   login,
   createUser,
@@ -84,5 +108,9 @@ export default {
   logout,
   getCurrentUser,
   isAuthenticated,
-  getToken
+  getToken,
+  forgotPassword,
+  verifyOTP,
+  resetPassword,
+  updateMyPassword
 };

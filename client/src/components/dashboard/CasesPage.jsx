@@ -164,7 +164,10 @@ const CasesPage = () => {
       caseType: caseItem.caseType || 'civil',
       status: caseItem.status || 'open',
       priority: caseItem.priority || 'medium',
-      hearingDate: caseItem.hearingDate ? new Date(caseItem.hearingDate).toISOString().slice(0, 10) : '',
+      hearingDate: caseItem.hearingDate ? (() => {
+        const d = new Date(caseItem.hearingDate);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+      })() : '',
       assignedTo: caseItem.assignedTo?._id || ''
     });
     setShowEditModal(true);
@@ -409,7 +412,7 @@ const CasesPage = () => {
               <form id="create-case-form" onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Title <span className="text-red-500">*</span></label>
-                  <input type="text" name="title" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }} placeholder="E.g. Smith vs Doe" required />
+                  <input type="text" name="title" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }} placeholder="Enter Title" required />
                 </div>
 
                 <div>
@@ -449,8 +452,8 @@ const CasesPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Hearing Date</label>
-                    <input type="date" name="hearingDate" value={formData.hearingDate} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', height: '42px' }} />
+                    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Hearing Date & Time</label>
+                    <input type="datetime-local" name="hearingDate" value={formData.hearingDate} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', height: '42px' }} />
                   </div>
                 </div>
 
@@ -530,9 +533,12 @@ const CasesPage = () => {
                   <div className="flex items-center gap-3 p-3 rounded" style={{ backgroundColor: 'var(--bg-primary)' }}>
                     <Calendar className="w-5 h-5 text-gold" />
                     <div>
-                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Hearing Date</p>
-                      <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
-                        {new Date(selectedCase.hearingDate).toLocaleDateString()}
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Hearing Date & Time</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                        {new Date(selectedCase.hearingDate).toLocaleString('en-IN', {
+                          dateStyle: 'medium',
+                          timeStyle: 'short'
+                        })}
                       </p>
                     </div>
                   </div>
@@ -590,8 +596,8 @@ const CasesPage = () => {
                     <Select value={priorityOptions.find(opt => opt.value === editFormData.priority)} onChange={(selected) => setEditFormData(prev => ({ ...prev, priority: selected.value }))} options={priorityOptions} styles={customSelectStyles} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Hearing Date</label>
-                    <input type="date" name="hearingDate" value={editFormData.hearingDate} onChange={handleEditInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', height: '42px' }} />
+                    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Hearing Date & Time</label>
+                    <input type="datetime-local" name="hearingDate" value={editFormData.hearingDate} onChange={handleEditInputChange} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', height: '42px' }} />
                   </div>
                 </div>
 

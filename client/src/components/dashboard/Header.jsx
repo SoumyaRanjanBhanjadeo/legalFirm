@@ -6,11 +6,14 @@ import {
 import Swal from 'sweetalert2';
 import { logout } from '../../store/authSlice';
 import { logout as logoutService } from '../../services/auth/authService';
+import { useNavigate } from 'react-router-dom';
+import NotificationDropdown from './NotificationDropdown';
 
 const Header = ({ toggleSidebar, toggleMobileSidebar }) => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -70,14 +73,7 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }) => {
 
         {/* Right Section */}
         <div className="flex items-center space-x-3">
-          {/* Notifications */}
-          <button
-            className="relative p-2 rounded-lg hover:bg-gold/10 transition-colors cursor-pointer"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
+          <NotificationDropdown />
 
           {/* User Menu */}
           <div className="relative">
@@ -128,6 +124,10 @@ const Header = ({ toggleSidebar, toggleMobileSidebar }) => {
 
                   <div className="p-2">
                     <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        navigate('/dashboard/profile');
+                      }}
                       className="flex items-center w-full px-3 py-2 rounded-lg text-sm hover:bg-gold/10 transition-colors cursor-pointer"
                       style={{ color: 'var(--text-primary)' }}
                     >

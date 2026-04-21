@@ -1,4 +1,4 @@
-import { 
+import {
   FolderOpen, Users, Calendar, FileText
 } from 'lucide-react';
 
@@ -150,11 +150,10 @@ const DashboardHome = () => {
                 <div className={`p-3 rounded-lg ${stat.bgColor}`}>
                   <Icon className="w-6 h-6 text-gold" />
                 </div>
-                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                  stat.changeType === 'positive' 
-                    ? 'text-green-500 bg-green-500/10' 
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${stat.changeType === 'positive'
+                    ? 'text-green-500 bg-green-500/10'
                     : 'text-red-500 bg-red-500/10'
-                }`}>
+                  }`}>
                   {stat.change}
                 </span>
               </div>
@@ -172,7 +171,7 @@ const DashboardHome = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* Recent Cases */}
-        <div className="lg:col-span-2 rounded-xl border" style={{ 
+        <div className="lg:col-span-2 rounded-xl border" style={{
           backgroundColor: 'var(--bg-secondary)',
           borderColor: 'var(--border-color)'
         }}>
@@ -186,7 +185,7 @@ const DashboardHome = () => {
               </button>
             </div>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -238,7 +237,7 @@ const DashboardHome = () => {
         </div>
 
         {/* Upcoming Hearings */}
-        <div className="rounded-xl border" style={{ 
+        <div className="rounded-xl border" style={{
           backgroundColor: 'var(--bg-secondary)',
           borderColor: 'var(--border-color)'
         }}>
@@ -247,7 +246,7 @@ const DashboardHome = () => {
               Upcoming Hearings
             </h2>
           </div>
-          
+
           <div className="p-4 space-y-3">
             {upcomingHearings.map((hearing, index) => (
               <div
@@ -283,10 +282,10 @@ const DashboardHome = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { icon: FolderOpen, label: 'New Case', color: 'bg-gold/10 hover:bg-gold/20' },
-          { icon: Users, label: 'Add Client', color: 'bg-blue-500/10 hover:bg-blue-500/20' },
-          { icon: Calendar, label: 'Schedule Hearing', color: 'bg-purple-500/10 hover:bg-purple-500/20' },
-          { icon: FileText, label: 'Upload Document', color: 'bg-green-500/10 hover:bg-green-500/20' },
+          { icon: FolderOpen, label: 'New Case', color: 'bg-gold/10 hover:bg-gold/20', link: '/dashboard/cases' },
+          { icon: Users, label: 'Add Client', color: 'bg-blue-500/10 hover:bg-blue-500/20', link: '/dashboard/clients' },
+          { icon: Calendar, label: 'Schedule Hearing', color: 'bg-purple-500/10 hover:bg-purple-500/20', link: '/dashboard/hearings' },
+          { icon: FileText, label: 'Upload Document', color: 'bg-green-500/10 hover:bg-green-500/20', link: '/dashboard/documents' },
         ].map((action, index) => {
           const Icon = action.icon;
           return (
@@ -294,6 +293,7 @@ const DashboardHome = () => {
               key={index}
               className={`flex flex-col items-center justify-center p-4 lg:p-6 rounded-xl border transition-all duration-300 transform hover:scale-105 cursor-pointer ${action.color}`}
               style={{ borderColor: 'var(--border-color)' }}
+              onClick={() => window.location.href = action.link}
             >
               <Icon className="w-8 h-8 mb-2 text-gold" />
               <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>

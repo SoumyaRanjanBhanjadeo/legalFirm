@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const sendEmail = require('../utils/sendEmail');
 
 // Generate JWT Token
 const generateToken = (userId) => {
@@ -82,15 +83,15 @@ const login = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
-          permissions: user.role === 'admin' 
+          permissions: user.role === 'admin'
             ? {
-                canView: true,
-                canRead: true,
-                canWrite: true,
-                canUpdate: true,
-                canDelete: true,
-                canDownload: true
-              }
+              canView: true,
+              canRead: true,
+              canWrite: true,
+              canUpdate: true,
+              canDelete: true,
+              canDownload: true
+            }
             : user.permissions
         }
       }
@@ -193,13 +194,13 @@ const createUser = async (req, res) => {
           role: user.role,
           permissions: user.role === 'admin'
             ? {
-                canView: true,
-                canRead: true,
-                canWrite: true,
-                canUpdate: true,
-                canDelete: true,
-                canDownload: true
-              }
+              canView: true,
+              canRead: true,
+              canWrite: true,
+              canUpdate: true,
+              canDelete: true,
+              canDownload: true
+            }
             : user.permissions,
           isActive: user.isActive,
           createdAt: user.createdAt
@@ -240,13 +241,13 @@ const getMe = async (req, res) => {
           role: user.role,
           permissions: user.role === 'admin'
             ? {
-                canView: true,
-                canRead: true,
-                canWrite: true,
-                canUpdate: true,
-                canDelete: true,
-                canDownload: true
-              }
+              canView: true,
+              canRead: true,
+              canWrite: true,
+              canUpdate: true,
+              canDelete: true,
+              canDownload: true
+            }
             : user.permissions
         }
       }
@@ -272,7 +273,7 @@ const getAllUsers = async (req, res) => {
 
     // Get total count
     const total = await User.countDocuments();
-    
+
     // Get paginated users
     const users = await User.find()
       .select('-password')
@@ -282,7 +283,7 @@ const getAllUsers = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: { 
+      data: {
         users,
         pagination: {
           totalItems: total,
@@ -391,13 +392,13 @@ const updateUser = async (req, res) => {
           role: user.role,
           permissions: user.role === 'admin'
             ? {
-                canView: true,
-                canRead: true,
-                canWrite: true,
-                canUpdate: true,
-                canDelete: true,
-                canDownload: true
-              }
+              canView: true,
+              canRead: true,
+              canWrite: true,
+              canUpdate: true,
+              canDelete: true,
+              canDownload: true
+            }
             : user.permissions,
           isActive: user.isActive,
           isBlocked: user.isBlocked
@@ -504,6 +505,250 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// @desc    Forgot Password
+// @route   POST /api/auth/forgot-password
+// @access  Public
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Please provide email' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No user found with this email' });
+    }
+
+    // Generate 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Hash OTP before saving
+    const salt = await bcrypt.genSalt(10);
+    user.resetPasswordOtp = await bcrypt.hash(otp, salt);
+    // OTP expires in 10 minutes
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+    user.passwordResetVerified = false;
+
+    await user.save();
+
+    // Send email
+    const message = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #333;">Password Reset Request</h2>
+        <p>You requested a password reset for your LegalFirm account. Please use the following 6-digit OTP to complete the process:</p>
+        <div style="text-align: center; margin: 20px 0;">
+          <span style="background: #f4f4f4; padding: 15px 25px; display: inline-block; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 4px; color: #d4af37;">${otp}</span>
+        </div>
+        <p style="color: #666; font-size: 14px;">This OTP is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+        <p style="color: #999; font-size: 12px; text-align: center;">&copy; ${new Date().getFullYear()} LegalFirm. All rights reserved.</p>
+      </div>
+    `;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Password Reset OTP - LegalFirm',
+        html: message
+      });
+
+      res.status(200).json({ success: true, message: 'OTP sent to email' });
+    } catch (err) {
+      user.resetPasswordOtp = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      console.error('Email send error:', err);
+      return res.status(500).json({ success: false, message: 'Email could not be sent' });
+    }
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Verify OTP
+// @route   POST /api/auth/verify-otp
+// @access  Public
+const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: 'Please provide email and OTP' });
+    }
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user || !user.resetPasswordOtp) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    // Check OTP
+    const isOTPValid = await bcrypt.compare(otp, user.resetPasswordOtp);
+    if (!isOTPValid) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    user.passwordResetVerified = true;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'OTP verified successfully' });
+  } catch (error) {
+    console.error('Verify OTP error:', error);
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Reset Password
+// @route   POST /api/auth/reset-password
+// @access  Public
+const resetPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide email and new password' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user || !user.passwordResetVerified) {
+      return res.status(400).json({ success: false, message: 'User not verified for password reset' });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+
+    // Clear reset fields
+    user.resetPasswordOtp = undefined;
+    user.resetPasswordExpires = undefined;
+    user.passwordResetVerified = undefined;
+
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Update password for logged in user
+// @route   PUT /api/auth/update-password
+// @access  Private
+const updateMyPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide current and new password'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    const user = await User.findById(req.user.userId).select('+password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Incorrect current password'
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully'
+    });
+  } catch (error) {
+    console.error('Update password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while updating password',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Update notification settings for logged in user
+// @route   PUT /api/v1/auth/settings/notifications
+// @access  Private
+const updateNotificationSettings = async (req, res) => {
+  try {
+    const { appNotifications, emailNotifications } = req.body;
+
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (typeof appNotifications === 'boolean') {
+      user.notificationSettings.appNotifications = appNotifications;
+    }
+    if (typeof emailNotifications === 'boolean') {
+      user.notificationSettings.emailNotifications = emailNotifications;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Notification settings updated.',
+      data: { notificationSettings: user.notificationSettings }
+    });
+  } catch (error) {
+    console.error('Update notification settings error:', error);
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Get notification settings for logged in user
+// @route   GET /api/v1/auth/settings/notifications
+// @access  Private
+const getNotificationSettings = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.status(200).json({
+      success: true,
+      data: { notificationSettings: user.notificationSettings }
+    });
+  } catch (error) {
+    console.error('Get notification settings error:', error);
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   login,
   createUser,
@@ -511,5 +756,11 @@ module.exports = {
   getAllUsers,
   updateUser,
   toggleUserBlock,
-  deleteUser
+  deleteUser,
+  forgotPassword,
+  verifyOTP,
+  resetPassword,
+  updateMyPassword,
+  updateNotificationSettings,
+  getNotificationSettings
 };

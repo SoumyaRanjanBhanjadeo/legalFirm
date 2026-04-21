@@ -1,0 +1,88 @@
+/* Custom styling for react-big-calendar to match the gold theme */
+
+.rbc-calendar {
+  font-family: inherit;
+}
+
+.rbc-toolbar {
+  display: none !important;
+}
+
+.rbc-toolbar button:hover {
+  background-color: var(--gold) !important;
+  color: black !important;
+  border-color: var(--gold) !important;
+}
+
+.rbc-month-view {
+  border-radius: 20px !important;
+  border: 1px solid var(--border-color) !important;
+  background-color: #0c0c0c !important;
+  /* Deep dark */
+  overflow: hidden;
+}
+
+.rbc-month-row {
+  border-color: var(--border-color) !important;
+}
+
+.rbc-day-bg {
+  border-color: var(--border-color) !important;
+}
+
+.rbc-header {
+  padding: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-color) !important;
+}
+
+.rbc-day-bg.rbc-today {
+  background-color: rgba(184, 134, 11, 0.08) !important;
+}
+
+.rbc-off-range-bg {
+  background-color: #050505 !important;
+}
+
+.dark .rbc-off-range-bg {
+  background-color: #050505 !important;
+}
+
+.rbc-event {
+  background-color: var(--gold) !important;
+  border: none !important;
+  color: yellow !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.rbc-event:hover {
+  transform: scale(1.02);
+}
+
+.rbc-show-more {
+  color: var(--gold) !important;
+  font-weight: 700 !important;
+}
+
+.rbc-agenda-view table.rbc-agenda-table {
+  border-color: var(--border-color) !important;
+}
+
+.rbc-agenda-view table.rbc-agenda-table thead>tr>th {
+  border-color: var(--border-color) !important;
+  color: var(--text-primary);
+}
+
+.rbc-agenda-date-cell,
+.rbc-agenda-time-cell {
+  color: var(--text-secondary) !important;
+}
