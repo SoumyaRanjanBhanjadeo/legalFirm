@@ -9,25 +9,39 @@ const NotificationDropdown = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const audioRef = React.useRef(null);
+  const [isAudioUnlocked, setIsAudioUnlocked] = useState(false);
+
+  useEffect(() => {
+    // Initialize audio object
+    audioRef.current = new Audio('/notification.wav');
+    audioRef.current.load();
+
+    const unlockAudio = () => {
+      if (audioRef.current && !isAudioUnlocked) {
+        // Playing and immediately pausing satisfies the browser's autoplay policy
+        audioRef.current.play()
+          .then(() => {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            setIsAudioUnlocked(true);
+            document.removeEventListener('click', unlockAudio);
+            console.log('Notification audio system unlocked');
+          })
+          .catch(e => console.error('Audio unlock failed:', e));
+      }
+    };
+
+    document.addEventListener('click', unlockAudio);
+    return () => document.removeEventListener('click', unlockAudio);
+  }, [isAudioUnlocked]);
+
   const notificationSound = useCallback(() => {
-    try {
-      // Create a short, pleasant notification beep using Web Audio API
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return;
-      const ctx = new AudioContext();
-      const oscillator = ctx.createOscillator();
-      const gainNode = ctx.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, ctx.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.3);
-      gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-      oscillator.start(ctx.currentTime);
-      oscillator.stop(ctx.currentTime + 0.4);
-    } catch (e) {
-      // Silently fail if audio context is not supported
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(e => {
+        console.error('Failed to play notification sound:', e);
+      });
     }
   }, []);
 
