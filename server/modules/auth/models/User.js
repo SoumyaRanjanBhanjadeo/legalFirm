@@ -55,6 +55,20 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  resetPasswordOtp: {
+    type: String
+  },
+  resetPasswordExpires: {
+    type: Date
+  },
+  passwordResetVerified: {
+    type: Boolean,
+    default: false
+  },
+  notificationSettings: {
+    appNotifications: { type: Boolean, default: true },
+    emailNotifications: { type: Boolean, default: true }
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

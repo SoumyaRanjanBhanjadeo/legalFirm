@@ -345,7 +345,7 @@ const ClientsPage = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     maxLength={10}
-                    className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }} placeholder="+1 234 567 8900" />
+                    className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }} placeholder="+91 8933745375" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Address</label>

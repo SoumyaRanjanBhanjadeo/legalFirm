@@ -17,6 +17,9 @@ const MessagesPage = lazy(() => import('./components/dashboard/MessagesPage'));
 const ReportsPage = lazy(() => import('./components/dashboard/ReportsPage'));
 const UsersPage = lazy(() => import('./components/dashboard/UsersPage'));
 const SettingsPage = lazy(() => import('./components/dashboard/SettingsPage'));
+const ProfilePage = lazy(() => import('./components/dashboard/Profile'));
+const AIChatBot = lazy(() => import('./components/dashboard/AIChatBot'));
+const NotificationsPage = lazy(() => import('./components/dashboard/NotificationsPage'));
 
 // Loading fallback component
 const LoadingFallback = () => (
@@ -53,6 +56,9 @@ function App() {
               <Route path="reports" element={<ReportsPage />} />
               <Route path="users" element={<UsersPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="ai-chatbot" element={<AIChatBot />} />
+              <Route path="notifications" element={<NotificationsPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -61,7 +61,7 @@ const sendCaseCreationEmail = async (clientEmail, clientName, caseDetails) => {
               ${caseDetails.hearingDate ? `
               <tr>
                 <td style="padding: 8px 0; color: #6B7280;">Hearing Date:</td>
-                <td style="padding: 8px 0; color: #0A0A0A;">${new Date(caseDetails.hearingDate).toLocaleDateString()}</td>
+                <td style="padding: 8px 0; color: #0A0A0A;">${new Date(caseDetails.hearingDate).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
               </tr>
               ` : ''}
             </table>
