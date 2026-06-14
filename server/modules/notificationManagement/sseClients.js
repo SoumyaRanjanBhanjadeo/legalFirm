@@ -1,7 +1,4 @@
-/**
- * SSE client map: userId (string) -> response object
- * Stores active SSE connections per user
- */
+// This file is used to manage Server-Sent Events (SSE) clients for real-time notifications.
 const sseClients = new Map();
 
 module.exports = { sseClients };

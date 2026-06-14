@@ -2,10 +2,7 @@ const Notification = require('../models/Notification');
 const User = require('../../auth/models/User');
 const sendEmail = require('../../auth/utils/sendEmail');
 
-/**
- * Create a notification record and push it via SSE if user has app notifications enabled.
- * Also sends email if user has email notifications enabled.
- */
+// Create and send notification to a user
 const createAndSendNotification = async (userId, { title, message, type = 'hearing' }) => {
   try {
     const user = await User.findById(userId);
