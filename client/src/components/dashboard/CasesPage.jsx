@@ -477,7 +477,7 @@ const CasesPage = () => {
             </div>
             <div className="shrink-0 flex items-center justify-end space-x-3 p-5 border-t" style={{ borderColor: 'var(--border-color)' }}>
               <button type="button" disabled={isSubmitting} onClick={resetForm} className="px-5 py-2 border rounded-lg hover:bg-gray-500/10 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>Cancel</button>
-              <button type="submit" form="create-case-form" disabled={isSubmitting} className="px-5 py-2 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer flex items-center justify-center min-w-[120px] disabled:opacity-70 disabled:cursor-not-allowed">
+              <button type="submit" form="create-case-form" disabled={isSubmitting} className="px-5 py-2 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer flex items-center justify-center min-w-30 disabled:opacity-70 disabled:cursor-not-allowed">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -631,7 +631,7 @@ const CasesPage = () => {
 
             <div className="shrink-0 flex items-center justify-end space-x-3 p-5 border-t" style={{ borderColor: 'var(--border-color)' }}>
               <button type="button" disabled={isSubmitting} onClick={() => setShowEditModal(false)} className="px-5 py-2 border rounded-lg hover:bg-gray-500/10 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>Cancel</button>
-              <button type="submit" form="edit-case-form" disabled={isSubmitting} className="px-5 py-2 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
+              <button type="submit" form="edit-case-form" disabled={isSubmitting} className="px-5 py-2 bg-gold text-black font-semibold rounded-lg hover:bg-gold-dark transition-colors cursor-pointer flex items-center justify-center min-w-35 disabled:opacity-70 disabled:cursor-not-allowed">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

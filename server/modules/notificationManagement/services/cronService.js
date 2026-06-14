@@ -3,11 +3,7 @@ const Case = require('../../caseManagement/models/Case');
 const User = require('../../auth/models/User');
 const { createAndSendNotification } = require('./notificationService');
 
-/**
- * Runs every day at midnight.
- * Finds all cases with hearings scheduled for tomorrow
- * and notifies associated users.
- */
+// Initialize and schedule cron jobs
 const initCronJobs = () => {
   // Run at midnight every day: '0 0 * * *'
   // For testing, use '* * * * *' to run every minute

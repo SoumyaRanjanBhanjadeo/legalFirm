@@ -12,9 +12,7 @@ const generateToken = (userId) => {
   );
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
+// Login user and return JWT token
 const login = async (req, res) => {
   try {
     const { identifier, password } = req.body;
@@ -106,9 +104,7 @@ const login = async (req, res) => {
   }
 };
 
-// @desc    Create new user (Admin only)
-// @route   POST /api/auth/create-user
-// @access  Private (Admin)
+// Create a new user (Admin only)
 const createUser = async (req, res) => {
   try {
     const { name, email, password, role, permissions } = req.body;
@@ -217,9 +213,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// @desc    Get current logged in user
-// @route   GET /api/auth/me
-// @access  Private
+// Get current logged in user
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -262,9 +256,7 @@ const getMe = async (req, res) => {
   }
 };
 
-// @desc    Get all users (Admin only)
-// @route   GET /api/auth/users
-// @access  Private (Admin)
+// Get all users (Admin only)
 const getAllUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -305,9 +297,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// @desc    Update user (Admin only)
-// @route   PUT /api/auth/users/:id
-// @access  Private (Admin)
+// Update user (Admin only)
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -415,9 +405,7 @@ const updateUser = async (req, res) => {
   }
 };
 
-// @desc    Block/Unblock user (Admin only)
-// @route   PUT /api/auth/users/:id/toggle-block
-// @access  Private (Admin)
+// Block/Unblock user (Admin only)
 const toggleUserBlock = async (req, res) => {
   try {
     const { id } = req.params;
@@ -465,9 +453,7 @@ const toggleUserBlock = async (req, res) => {
   }
 };
 
-// @desc    Delete user (Admin only)
-// @route   DELETE /api/auth/users/:id
-// @access  Private (Admin)
+// Delete user (Admin only)
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -505,9 +491,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// @desc    Forgot Password
-// @route   POST /api/auth/forgot-password
-// @access  Public
+// Forgot Password
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -568,9 +552,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// @desc    Verify OTP
-// @route   POST /api/auth/verify-otp
-// @access  Public
+// Verify OTP
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -603,9 +585,7 @@ const verifyOTP = async (req, res) => {
   }
 };
 
-// @desc    Reset Password
-// @route   POST /api/auth/reset-password
-// @access  Public
+// Reset Password
 const resetPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -641,9 +621,7 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// @desc    Update password for logged in user
-// @route   PUT /api/auth/update-password
-// @access  Private
+// Update password for logged in user
 const updateMyPassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -698,9 +676,7 @@ const updateMyPassword = async (req, res) => {
   }
 };
 
-// @desc    Update notification settings for logged in user
-// @route   PUT /api/v1/auth/settings/notifications
-// @access  Private
+// Update notification settings for logged in user
 const updateNotificationSettings = async (req, res) => {
   try {
     const { appNotifications, emailNotifications } = req.body;
@@ -730,9 +706,7 @@ const updateNotificationSettings = async (req, res) => {
   }
 };
 
-// @desc    Get notification settings for logged in user
-// @route   GET /api/v1/auth/settings/notifications
-// @access  Private
+// Get notification settings for logged in user
 const getNotificationSettings = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);

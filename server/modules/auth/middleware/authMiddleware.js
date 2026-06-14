@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// @desc    Authenticate user and protect routes
-// @usage   Add as middleware before controller
+// Protect routes middleware
 const protect = async (req, res, next) => {
   try {
     let token;
@@ -67,8 +66,7 @@ const protect = async (req, res, next) => {
   }
 };
 
-// @desc    Authorize user based on role
-// @usage   Add as middleware after protect middleware
+// Authorize roles middleware
 const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -89,8 +87,7 @@ const authorize = (...roles) => {
   };
 };
 
-// @desc    Check specific permission
-// @usage   Add as middleware after protect middleware
+// Check specific permission middleware
 const checkPermission = (permission) => {
   return (req, res, next) => {
     if (!req.user) {

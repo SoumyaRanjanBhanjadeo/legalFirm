@@ -1,11 +1,7 @@
 const Notification = require('../models/Notification');
 const { sseClients } = require('../sseClients');
 
-/**
- * @desc    Open SSE stream for real-time notifications
- * @route   GET /api/v1/notifications/stream
- * @access  Private
- */
+// Stream notifications to the client using Server-Sent Events (SSE)
 const streamNotifications = (req, res) => {
   const userId = req.user.userId;
 
@@ -33,11 +29,7 @@ const streamNotifications = (req, res) => {
   });
 };
 
-/**
- * @desc    Get all notifications for the logged-in user
- * @route   GET /api/v1/notifications
- * @access  Private
- */
+// Get notifications for the authenticated user
 const getNotifications = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
@@ -57,11 +49,7 @@ const getNotifications = async (req, res) => {
   }
 };
 
-/**
- * @desc    Mark one or all notifications as read
- * @route   PUT /api/v1/notifications/mark-read
- * @access  Private
- */
+// Mark one or all notifications as read
 const markAsRead = async (req, res) => {
   try {
     const { notificationId } = req.body;

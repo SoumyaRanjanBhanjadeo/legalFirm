@@ -6,9 +6,7 @@ const { createAndSendNotification } = require('../../notificationManagement/serv
 
 // ==================== CLIENTS ====================
 
-// @desc    Get all clients with pagination
-// @route   GET /api/clients
-// @access  Private
+// Get all clients with pagination
 const getClients = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -45,9 +43,7 @@ const getClients = async (req, res) => {
   }
 };
 
-// @desc    Create new client
-// @route   POST /api/clients
-// @access  Private
+// Create new client
 const createClient = async (req, res) => {
   try {
     const { name, email, phone, address, status } = req.body;
@@ -91,9 +87,7 @@ const createClient = async (req, res) => {
   }
 };
 
-// @desc    Update client
-// @route   PUT /api/clients/:id
-// @access  Private
+// Update client
 const updateClient = async (req, res) => {
   try {
     const { id } = req.params;
@@ -130,9 +124,7 @@ const updateClient = async (req, res) => {
   }
 };
 
-// @desc    Delete client
-// @route   DELETE /api/clients/:id
-// @access  Private
+// Delete client
 const deleteClient = async (req, res) => {
   try {
     const { id } = req.params;
@@ -172,9 +164,7 @@ const deleteClient = async (req, res) => {
 
 // ==================== CASES ====================
 
-// @desc    Get all cases with pagination
-// @route   GET /api/cases
-// @access  Private
+// Get all cases with pagination
 const getCases = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -213,9 +203,7 @@ const getCases = async (req, res) => {
   }
 };
 
-// @desc    Create new case
-// @route   POST /api/cases
-// @access  Private
+// Create new case
 const createCase = async (req, res) => {
   try {
     const { title, description, client: clientId, caseType, status, priority, hearingDate, assignedTo } = req.body;
@@ -312,9 +300,7 @@ const createCase = async (req, res) => {
   }
 };
 
-// @desc    Update case
-// @route   PUT /api/cases/:id
-// @access  Private
+// Update case
 const updateCase = async (req, res) => {
   try {
     const { id } = req.params;
@@ -400,9 +386,7 @@ const updateCase = async (req, res) => {
   }
 };
 
-// @desc    Delete case
-// @route   DELETE /api/cases/:id
-// @access  Private
+// Delete case
 const deleteCase = async (req, res) => {
   try {
     const { id } = req.params;
